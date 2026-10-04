@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>简历智检 AI · 演示</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231E3A5F'/%3E%3Cpath d='M9 10h14v2.2H9zm0 5h14v2.2H9zm0 5h9v2.2H9z' fill='%23F2B84B'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ink:#1E3A5F;
+    --ink-deep:#12283F;
+    --paper:#F5F7FA;
+    --card:#FFFFFF;
+    --line:#DCE3EC;
+    --line-soft:#E9EEF4;
+    --accent:#D97706;
+    --accent-soft:#FDF3E3;
+    --good:#1E8E5A;
+    --warn:#B45309;
+    --bad:#C0392B;
+    --text:#2B3A4F;
+    --text-soft:#5C6B80;
+    --muted:#8A97A8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    background:var(--paper);
+    color:var(--text);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* ===== Header ===== */
+  header.site{
+    background:var(--ink-deep);
+    color:#fff;
+    padding:26px 0 22px;
+  }
+  header.site .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .mark{
+    width:40px;height:40px;border-radius:10px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .brand h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+  .brand p{font-size:12.5px;color:#B9C6D6;margin-top:2px}
+  .badge{
+    font-size:12px;color:#E8F0F8;border:1px solid #3D5a7f;border-radius:999px;
+    padding:5px 14px;background:rgba(255,255,255,.06);
+  }
+
+  /* ===== Layout ===== */
+  main{padding:26px 0 10px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;box-shadow:0 1px 3px rgba(30,58,95,.05);
+  }
+  .card h2{
+    font-size:15px;color:var(--ink);font-weight:700;margin-bottom:4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .card .sub{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+  .step-num{
+    width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;
+    font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex:none;
+  }
+
+  /* ===== Input panel ===== */
+  textarea#resumeInput{
+    width:100%;min-height:330px;resize:vertical;border:1px solid var(--line);
+    border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.7;
+    font-family:inherit;color:var(--text);background:#FCFDFE;outline:none;
+    transition:border-color .15s;
+  }
+  textarea#resumeInput:focus{border-color:var(--ink)}
+  .input-tools{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    border-radius:9px;padding:8px 16px;font-size:13px;font-weight:600;
+    cursor:pointer;transition:all .15s;font-family:inherit;
+  }
+  .btn:hover{border-color:var(--ink);background:#F4F7FB}
+  .btn.primary{background:var(--ink);border-color:var(--ink);color:#fff}
+  .btn.primary:hover{background:var(--ink-deep)}
+  .btn.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.accent:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent;border-color:transparent;color:var(--muted);font-weight:500}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+
+  .field{margin-top:16px}
+  .field label{font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:8px}
+  .job-chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{
+    border:1px solid var(--line);background:#fff;border-radius:999px;
+    padding:6px 14px;font-size:12.5px;color:var(--text-soft);cursor:pointer;transition:all .15s;
+  }
+  .chip:hover{border-color:var(--ink)}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+  .custom-job{display:flex;gap:8px;margin-top:10px;align-items:center}
+  .custom-job input{
+    flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 12px;
+    font-size:13px;font-family:inherit;outline:none;
+  }
+  .custom-job input:focus{border-color:var(--ink)}
+
+  .diagnose-row{display:flex;gap:10px;margin-top:18px;align-items:center}
+  .diag-note{font-size:12px;color:var(--muted)}
+
+  /* ===== Report panel ===== */
+  .empty-state{
+    border:1.5px dashed var(--line);border-radius:12px;padding:46px 20px;text-align:center;color:var(--muted);
+  }
+  .empty-state .big{font-size:15px;color:var(--text-soft);margin-bottom:6px;font-weight:600}
+  .empty-state .sm{font-size:12.5px}
+
+  .report-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+  .score-box{display:flex;align-items:center;gap:16px}
+  .score-ring{position:relative;width:92px;height:92px;flex:none}
+  .score-ring svg{transform:rotate(-90deg)}
+  .score-ring .val{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .score-ring .val b{font-size:26px;color:var(--ink);line-height:1}
+  .score-ring .val span{font-size:11px;color:var(--muted);margin-top:2px}
+  .level-tag{
+    display:inline-block;padding:4px 12px;border-radius:999px;font-size:12.5px;font-weight:700;
+  }
+  .level-good{background:#E3F5EC;color:var(--good)}
+  .level-mid{background:#FDF3E3;color:var(--warn)}
+  .level-bad{background:#FBE9E7;color:var(--bad)}
+  .report-meta{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+
+  .dim-block{margin-bottom:14px}
+  .dim-head{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+  .dim-head .name{font-weight:600;color:var(--ink)}
+  .dim-head .score{font-weight:700;color:var(--ink)}
+  .dim-head .score small{color:var(--muted);font-weight:500}
+  .bar{height:9px;border-radius:99px;background:#EDF1F6;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px;background:var(--ink);transition:width .6s cubic-bezier(.22,.61,.36,1)}
+  .bar i.hi{background:var(--good)}
+  .bar i.mid{background:var(--warn)}
+  .bar i.low{background:var(--bad)}
+  .dim-basis{font-size:12px;color:var(--muted);margin-top:4px}
+
+  .section-title{
+    font-size:13px;font-weight:700;color:var(--ink);margin:22px 0 10px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .section-title::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+  .kw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .kw-box{border:1px solid var(--line-soft);border-radius:10px;padding:10px 12px;font-size:12.5px}
+  .kw-box .t{font-weight:600;color:var(--ink);margin-bottom:6px}
+  .kw-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .kw-tags span{border-radius:6px;padding:2px 8px;font-size:11.5px}
+  .kw-tags .hit{background:#E3F5EC;color:var(--good)}
+  .kw-tags .miss{background:#F1F4F8;color:var(--muted)}
+  .kw-rate{font-size:12.5px;color:var(--text-soft);margin-top:8px}
+
+  .advice{display:flex;gap:12px;border:1px solid var(--line-soft);border-radius:11px;padding:13px 14px;margin-bottom:10px;background:#FCFDFE}
+  .advice .idx{
+    width:24px;height:24px;border-radius:7px;background:var(--accent-soft);color:var(--accent);
+    font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+  }
+  .advice .body{flex:1;min-width:0}
+  .advice .q{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+  .advice .why{font-size:12.5px;color:var(--text-soft);margin-bottom:7px}
+  .advice .quote{
+    background:#F4F7FB;border-left:3px solid var(--accent);border-radius:0 7px 7px 0;
+    padding:7px 10px;font-size:12.5px;color:var(--text-soft);margin-bottom:8px;
+  }
+  .advice .quote b{color:var(--accent);font-weight:600}
+  .advice .rewrite{font-size:12.5px;color:var(--text)}
+  .advice .rewrite b{color:var(--good);font-weight:700}
+  .advice .actions{margin-top:9px;display:flex;gap:8px;align-items:center}
+  .mini-btn{
+    border:1px solid var(--line);background:#fff;border-radius:7px;padding:4px 11px;
+    font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--ink);transition:all .15s;
+  }
+  .mini-btn:hover{border-color:var(--ink)}
+  .mini-btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .mini-btn.ok{background:var(--good);border-color:var(--good);color:#fff}
+
+  /* ===== Compare view ===== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(18,40,63,.55);z-index:50;
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .overlay.show{display:flex}
+  .modal{
+    background:#fff;border-radius:16px;max-width:940px;width:100%;max-height:88vh;
+    overflow:auto;padding:24px 26px;position:relative;
+  }
+  .modal .close{
+    position:absolute;top:14px;right:16px;border:none;background:var(--paper);
+    width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;color:var(--text-soft);
+  }
+  .modal h3{font-size:17px;color:var(--ink);margin-bottom:4px}
+  .modal .m-sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .cmp-col{border:1px solid var(--line-soft);border-radius:11px;overflow:hidden}
+  .cmp-col .head{padding:9px 14px;font-size:13px;font-weight:700}
+  .cmp-col .head.before{background:#F1F4F8;color:var(--text-soft)}
+  .cmp-col .head.after{background:#E3F5EC;color:var(--good)}
+  .cmp-col pre{
+    white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:12.5px;
+    line-height:1.75;padding:12px 14px;max-height:360px;overflow:auto;color:var(--text);
+  }
+  .cmp-col pre .new{background:#E3F5EC;border-radius:3px}
+  .cmp-dims{margin-top:18px}
+  .cmp-dims .row{display:grid;grid-template-columns:130px 1fr 130px 1fr;gap:10px;align-items:center;font-size:12.5px;margin-bottom:8px}
+  .cmp-dims .row .lbl{color:var(--text-soft)}
+  .cmp-dims .row .bar{background:#EDF1F6}
+  .cmp-dims .row .bar i.before-bar{background:#9FB0C4}
+  .cmp-dims .row .bar i.after-bar{background:var(--good)}
+  .cmp-dims .row .val{font-weight:700;color:var(--ink);white-space:nowrap}
+  .cmp-dims .row .val .up{color:var(--good);font-weight:700}
+
+  footer.site{padding:22px 0 34px;color:var(--muted);font-size:12px}
+  footer.site .line{display:flex;gap:6px;flex-wrap:wrap}
+
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink-deep);color:#fff;padding:10px 20px;border-radius:10px;
+    font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:99;
+    box-shadow:0 6px 20px rgba(18,40,63,.25);
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .loading{
+    display:none;text-align:center;padding:34px 0;color:var(--text-soft);font-size:13.5px;
+  }
+  .loading .dots{display:inline-flex;gap:6px;margin-bottom:10px}
+  .loading .dots i{
+    width:8px;height:8px;border-radius:50%;background:var(--ink);
+    animation:pulse 1s infinite ease-in-out;
+  }
+  .loading .dots i:nth-child(2){animation-delay:.15s}
+  .loading .dots i:nth-child(3){animation-delay:.3s}
+  @keyframes pulse{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+
+  @media (max-width:900px){
+    .grid{grid-template-columns:1fr}
+    .kw-grid{grid-template-columns:1fr}
+    .compare-grid{grid-template-columns:1fr}
+    .cmp-dims .row{grid-template-columns:90px 1fr;grid-template-rows:auto auto;gap:4px 10px}
+    textarea#resumeInput{min-height:260px}
+  }
+  @media (max-width:640px){
+    .btn,.chip,.mini-btn{min-height:44px}
+    textarea#resumeInput,#customJob{font-size:16px}
+    .advice .rewrite,.advice .why{font-size:13px}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#12283F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 3h12v18H6z"/><path d="M9 8h6M9 12h6M9 16h4"/>
+        </svg>
+      </div>
+      <div>
+        <h1>简历智检 AI</h1>
+        <p>智能简历优化助手 · 产品演示</p>
+      </div>
+    </div>
+    <div class="badge">演示版 · 本地运行 · 规则引擎模拟</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="grid">
+
+    <!-- ===== 左：输入 ===== -->
+    <section class="card">
+      <h2><span class="step-num">1</span>粘贴简历</h2>
+      <p class="sub">支持粘贴文本，或点击「加载示例」体验完整流程</p>
+      <textarea id="resumeInput" placeholder="在此粘贴你的简历内容……&#10;&#10;包含：基本信息、教育背景、实习/项目经历、技能证书、自我评价"></textarea>
+      <div class="input-tools">
+        <button class="btn" id="btnSample">加载示例简历</button>
+        <button class="btn ghost" id="btnClear">清空</button>
+      </div>
+
+      <div class="field">
+        <label>目标岗位</label>
+        <div class="job-chips" id="jobChips"></div>
+        <div class="custom-job">
+          <input type="text" id="customJob" placeholder="或输入自定义岗位，如：硬件工程师">
+          <button class="btn" id="btnCustomJob">使用</button>
+        </div>
+      </div>
+
+      <div class="diagnose-row">
+        <button class="btn primary" id="btnDiagnose">开始诊断</button>
+        <span class="diag-note">约 2 秒出报告 · 数据仅在本机处理</span>
+      </div>
+    </section>
+
+    <!-- ===== 右：报告 ===== -->
+    <section class="card" id="reportCard">
+      <h2><span class="step-num">2</span>诊断报告</h2>
+      <p class="sub">五维度评分 · 逐条建议 · 前后对比</p>
+      <div class="empty-state" id="emptyState">
+        <div class="big">等待诊断</div>
+        <div class="sm">粘贴简历并选择目标岗位，点击「开始诊断」</div>
+      </div>
+
+      <div class="loading" id="loadingBox">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div>正在解析简历并计算评分…</div>
+      </div>
+
+      <div id="reportBody" style="display:none">
+        <div class="report-head">
+          <div class="score-box">
+            <div class="score-ring">
+              <svg width="92" height="92" viewBox="0 0 92 92">
+                <circle cx="46" cy="46" r="40" fill="none" stroke="#EDF1F6" stroke-width="9"/>
+                <circle id="ringFg" cx="46" cy="46" r="40" fill="none" stroke="#1E3A5F" stroke-width="9"
+                        stroke-linecap="round" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+              </svg>
+              <div class="val"><b id="totalScore">0</b><span>总分</span></div>
+            </div>
+            <div>
+              <span class="level-tag" id="levelTag">待完善</span>
+              <div class="report-meta" style="margin:6px 0 0">目标岗位：<b id="metaJob">-</b><br>模块识别：<span id="metaModules">-</span></div>
+            </div>
+          </div>
+          <button class="btn accent" id="btnCompare" style="display:none">查看优化前后对比</button>
+        </div>
+
+        <div class="section-title">五维度得分</div>
+        <div id="dims"></div>
+
+        <div class="section-title">岗位关键词匹配</div>
+        <div class="kw-grid" id="kwGrid"></div>
+
+        <div class="section-title">逐条修改建议</div>
+        <div id="adviceList"></div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="line">本页面为产品 Demo，评分与建议由内置规则引擎模拟生成；接入真实大模型后可作为交叉校验。</div>
+    <div class="line">简历内容仅在浏览器本地处理，不会上传或保存。</div>
+  </div>
+</footer>
+
+<!-- ===== 对比弹窗 ===== -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="close" id="btnCloseModal" aria-label="关闭">×</button>
+    <h3>优化前后对比</h3>
+    <p class="m-sub">绿色高亮为采纳建议后的改写片段，分数已按新内容重算</p>
+    <div class="compare-grid">
+      <div class="cmp-col">
+        <div class="head before">优化前</div>
+        <pre id="beforeText"></pre>
+      </div>
+      <div class="cmp-col">
+        <div class="head after">优化后</div>
+        <pre id="afterText"></pre>
+      </div>
+    </div>
+    <div class="cmp-dims" id="cmpDims"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ===== APP LOGIC ===== */
+
+/* ---------- 数据 ---------- */
+const JOB_KB = {
+  '产品经理': ['需求分析','用户调研','原型','PRD','数据分析','项目管理','竞品','迭代','增长','Axure','用户反馈','上线'],
+  'Java开发': ['Java','Spring','MySQL','Redis','分布式','微服务','JVM','MyBatis','Kafka','Linux','数据库','接口'],
+  '新媒体运营': ['公众号','内容','粉丝','选题','排版','阅读量','短视频','抖音','涨粉','爆款','文案','运营'],
+  '数据分析': ['SQL','Python','Excel','可视化','报表','AB测试','指标','Tableau','统计','数据清洗','建模'],
+};
+const DEFAULT_KB = ['沟通','团队','项目','文档','分析','办公软件','英语','学习能力'];
+const ACTION_VERBS = ['主导','独立','搭建','优化','提升','制定','推动','完成','撰写','设计','开发','实现','落地','组织','统筹','达成','输出','改进','负责','参与','协助','规划'];
+const CLICHE_WORDS = ['吃苦耐劳','认真负责','性格开朗','学习能力强','乐于助人','积极向上','团队合作精神','沟通能力强','抗压能力强','责任心强','热爱学习','勤奋踏实'];
+
+const SAMPLE_RESUME = `张三 | 137****1234 | zhangsan@example.com | 求职意向：产品经理
+
+教育背景
+河北某大学 电子信息工程 本科 2023.09-2027.06
+
+实习经历
+2025.07-2025.09 某互联网公司 产品实习生
+负责公司产品需求收集，写文档，跟进开发进度。参与竞品分析，输出分析报告。协助运营完成活动上线。
+
+项目经历
+校园二手交易平台 App
+负责产品设计，绘制原型图，撰写 PRD 文档，协调前后端开发，平台上线后有一定用户量。
+
+技能证书
+Office、Axure、Figma、SQL 基础；英语六级 CET-6
+
+自我评价
+吃苦耐劳，认真负责，性格开朗，学习能力强，对产品工作充满热情。`;
+
+/* ---------- 状态 ---------- */
+let currentJob = '产品经理';
+let lastDiagnosis = null;   // {raw, dims, total, level, advices, kwHit, kwMiss}
+let adopted = new Set();    // 已采纳的建议序号
+
+/* ---------- 工具 ---------- */
+const $ = id => document.getElementById(id);
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---------- 解析模块 ---------- */
+function parseModules(resume){
+  const has = re => re.test(resume);
+  const modules = [];
+  if (has(/(\d{11}|@|电话|手机|联系方式|邮箱)/)) modules.push('基本信息');
+  if (has(/(教育背景|学历|本科|硕士|大学|学院)/)) modules.push('教育背景');
+  if (has(/(实习经历|项目经历|工作经历|实习|项目|工作)/)) modules.push('经历');
+  if (has(/(技能|证书|掌握|熟悉|熟练|CET|英语)/)) modules.push('技能证书');
+  if (has(/(自我评价|个人评价|自我介绍|评价)/)) modules.push('自我评价');
+  return modules;
+}
+function missingModules(modules){
+  const all = ['基本信息','教育背景','经历','技能证书','自我评价'];
+  return all.filter(m => !modules.includes(m));
+}
+/* 把简历切成句子，保留原文子串 */
+function splitSentences(resume){
+  return resume.split(/\n+/).flatMap(line => {
+    const t = line.trim();
+    if (t.length < 4) return [];
+    return t.split(/(?<=[。；;])/).map(s => s.trim()).filter(s => s.length >= 4);
+  });
+}
+
+/* ---------- 评分 ---------- */
+function countNumbers(resume){
+  let t = resume.replace(/\d{3}\*{4}\d{4}/g, '').replace(/[\w.-]+@[\w.-]+\.\w+/g, '');
+  const numbers = t.match(/\d+(\.\d+)?/g) || [];
+  const yearLike = /^(19|20)\d{2}$/;
+  const dateLike = /^\d{1,2}$/;
+  const dateToken = /^(19|20)\d{2}[./-]\d{1,2}$/;
+  return numbers.filter(n => !yearLike.test(n) && !dateLike.test(n) && !dateToken.test(n)).length;
+}
+function hasPercent(resume){ return /%\s*[0-9]|[0-9]\s*%|百分之/.test(resume); }
+function hasResultWord(resume){ return /(提升|增长|降低|减少|提高|翻倍|达到|突破|覆盖|节省|缩短)/.test(resume); }
+function hasMagnitude(resume){ return /(万人?|用户|篇|次|天|个月|家|倍|单|条|份)/.test(resume); }
+
+function scoreCompleteness(modules){
+  const all = ['基本信息','教育背景','经历','技能证书','自我评价'];
+  let s = 0;
+  all.forEach(m => { if (modules.includes(m)) s += 20; });
+  return s;
+}
+function scoreQuant(resume){
+  const n = countNumbers(resume);
+  let s = 20;
+  if (n >= 1) s = 45;
+  if (n >= 3) s = 70;
+  if (n >= 6) s = 88;
+  if (hasPercent(resume)) s = Math.min(100, s + 10);
+  if (hasResultWord(resume) && hasMagnitude(resume)) s = Math.max(s, 80);
+  return Math.min(100, s);
+}
+function scoreMatch(resume, job){
+  const kb = JOB_KB[job] || DEFAULT_KB;
+  const hit = kb.filter(k => resume.includes(k));
+  const ratio = kb.length ? hit.length / kb.length : 0;
+  return { score: Math.round(ratio * 100), hit, miss: kb.filter(k => !hit.includes(k)) };
+}
+function scoreExpression(resume, sentences){
+  let s = 60;
+  const expSentences = sentences.filter(st => /(负责|参与|主导|完成|设计|开发|撰写|组织|协调|输出|搭建|优化|推动)/.test(st));
+  s += Math.min(20, expSentences.length * 4);
+  const cliches = CLICHE_WORDS.filter(w => resume.includes(w));
+  s -= cliches.length * 8;
+  if (hasResultWord(resume)) s += 5;
+  return { score: Math.max(5, Math.min(100, s)), cliches };
+}
+function scoreFormat(resume){
+  const lines = resume.split('\n').filter(l => l.trim().length > 0);
+  let s = 55;
+  if (lines.length >= 8) s = 72;
+  if (lines.length >= 12) s = 84;
+  if (/\n\s*\n/.test(resume)) s += 6;
+  if (/[，。；：、]/.test(resume)) s += 5;
+  const loosePunct = (resume.match(/[，,]/g) || []).length + (resume.match(/[。.]/g) || []).length;
+  if (loosePunct < 3) s -= 10;
+  return Math.min(95, Math.max(20, s));
+}
+
+/* ---------- 建议生成 ---------- */
+function buildAdvices(resume, sentences, dims, match, modules, cliches){
+  const advices = [];
+
+  /* 1 量化不足 */
+  if (dims.quant < 60){
+    const target = sentences.find(st => /(负责|参与|协助|日常|主要)/.test(st) && !/\d/.test(st));
+    if (target){
+      advices.push({
+        q: '经历描述缺少量化成果',
+        why: '这段经历只描述了过程（做什么），没有数字与结果（做成什么样），HR 无法判断你的贡献大小。',
+        quote: target,
+        rewrite: '主导' + target.replace(/^(负责|参与|协助|日常|主要)/,'').replace(/。?$/,'，输出可量化成果并实现明显提升（具体数据可补充）。'),
+      });
+    }
+  }
+  /* 2 套话自我评价 */
+  if (cliches.length > 0){
+    const seLine = resume.split('\n').find(l => /(自我评价|个人评价|自我介绍)/.test(l));
+    const seBody = seLine ? resume.split('\n')[resume.split('\n').indexOf(seLine) + 1] : null;
+    const target = (seBody && seBody.trim().length > 4) ? seBody.trim() : null;
+    if (target){
+      advices.push({
+        q: '自我评价全是套话，无信息量',
+        why: '「' + cliches.slice(0,3).join('、') + '」等词汇几乎人人会写，无法体现你的差异化，是 HR 最常忽略的内容。',
+        quote: target,
+        rewrite: '具备 1 段产品实习 + 1 个校园项目经验，能独立完成需求梳理、原型绘制与文档输出；对数据分析有基础掌握，习惯用数据验证产品决策。（基于真实经历提炼）',
+      });
+    }
+  }
+  /* 3 关键词缺失 */
+  if (match.score < 60 && match.miss.length){
+    advices.push({
+      q: '岗位关键词覆盖不足（' + match.hit.length + '/' + (match.hit.length + match.miss.length) + '）',
+      why: '目标岗位为「' + currentJob + '」，简历中未出现：' + match.miss.slice(0,5).join('、') + '。简历会先被关键词筛选系统或 HR 快速扫读，缺失关键词容易被直接过滤。',
+      quote: (match.hit.length ? '当前命中：' + match.hit.join('、') : '当前未命中任何岗位关键词，需重点补充。'),
+      rewrite: '如具备相关经验，在经历与技能中补充：' + match.miss.slice(0,5).join('、') + '。示例：「参与' + match.miss[0] + '相关工作，输出' + (match.miss[1] || '结论') + '报告」。请勿虚构未经历的内容。',
+    });
+  }
+  /* 4 模块缺失 */
+  const miss = missingModules(modules);
+  if (miss.length){
+    advices.push({
+      q: '缺少必备模块：' + miss.join('、'),
+      why: '简历缺少这些模块会显著降低通过初筛的概率，HR 无法快速获取关键信息。',
+      quote: '当前已识别模块：' + (modules.length ? modules.join('、') : '无'),
+      rewrite: '补充模块后示例：「' + (miss.includes('基本信息') ? '姓名 | 电话 | 邮箱 | 求职意向' : miss[0] + '：具体内容') + '」。',
+    });
+  }
+  /* 5 动词弱 */
+  const weak = sentences.find(st => {
+    const s = st.replace(/[。；;，,]+$/, '');
+    return /^(负责|参与|协助|日常|主要)/.test(s) && s.length < 45;
+  });
+  if (weak && advices.length < 5){
+    const s = weak.replace(/[。；;，,]+$/, '');
+    advices.push({
+      q: '多用结果动词替代过程动词',
+      why: '「负责/参与」只说明你在场，不说明你的贡献；「主导/独立完成/搭建」更能体现个人价值。',
+      quote: weak,
+      rewrite: '主导' + s.replace(/^(负责|参与|协助|日常|主要)/,'').replace(/。?$/,'，取得可验证成果。'),
+    });
+  }
+  /* 6 格式 */
+  if (dims.format < 70){
+    advices.push({
+      q: '格式规范性不足',
+      why: '简历未按「基本信息 / 教育背景 / 经历 / 技能 / 自我评价」分段，或标点使用不规范，影响快速阅读。',
+      quote: '当前全文共 ' + resume.split('\n').filter(l=>l.trim()).length + ' 行，缺少清晰分段。',
+      rewrite: '按模块分段，每段标题加粗或独立成行；每条经历用「时间 - 公司/学校 - 岗位」开头，职责与成果分开写。',
+    });
+  }
+  return advices.slice(0, 7);
+}
+
+/* ---------- 主诊断 ---------- */
+function diagnose(resume, job){
+  const modules = parseModules(resume);
+  const sentences = splitSentences(resume);
+  const completeness = scoreCompleteness(modules);
+  const quant = scoreQuant(resume);
+  const m = scoreMatch(resume, job);
+  const ex = scoreExpression(resume, sentences);
+  const format = scoreFormat(resume);
+  const dims = {
+    completeness: { label: '内容完整度', score: completeness, basis: modules.length + '/5 模块已识别' },
+    quant:        { label: '量化成果',   score: quant,        basis: '检测到 ' + countNumbers(resume) + ' 个数据点' + (hasPercent(resume) ? '，含百分比' : '') },
+    match:        { label: '关键词匹配', score: m.score,      basis: '命中 ' + m.hit.length + '/' + (m.hit.length + m.miss.length) + ' 个岗位关键词' },
+    expression:   { label: '语言表达',   score: ex.score,     basis: ex.cliches.length ? '含 ' + ex.cliches.length + ' 处套话' : '行为动词使用良好' },
+    format:       { label: '格式规范',   score: format,       basis: resume.split('\n').filter(l=>l.trim()).length + ' 行' },
+  };
+  const total = Math.round(completeness*0.20 + quant*0.25 + m.score*0.25 + ex.score*0.20 + format*0.10);
+  const level = total >= 85 ? '优秀' : total >= 70 ? '良好' : total >= 55 ? '中等' : '待完善';
+  const advices = buildAdvices(resume, sentences, {
+    quant, match: m.score, format, completeness, expression: ex.score,
+  }, m, modules, ex.cliches);
+  return { raw: resume, dims, total, level, advices, kwHit: m.hit, kwMiss: m.miss, modules };
+}
+
+/* ---------- 渲染 ---------- */
+function renderReport(d){
+  lastDiagnosis = d;
+  adopted.clear();
+  $('emptyState').style.display = 'none';
+  $('loadingBox').style.display = 'none';
+  $('reportBody').style.display = 'block';
+
+  $('totalScore').textContent = d.total;
+  const ring = $('ringFg');
+  ring.style.strokeDashoffset = String(251.2 * (1 - d.total / 100));
+  ring.setAttribute('stroke', d.total >= 85 ? '#1E8E5A' : d.total >= 55 ? '#D97706' : '#C0392B');
+  const lt = $('levelTag');
+  lt.textContent = d.level;
+  lt.className = 'level-tag ' + (d.total >= 85 ? 'level-good' : d.total >= 55 ? 'level-mid' : 'level-bad');
+  $('metaJob').textContent = currentJob;
+  $('metaModules').textContent = d.modules.length + '/5';
+
+  const dimsBox = $('dims');
+  dimsBox.innerHTML = Object.values(d.dims).map(dim => {
+    const cls = dim.score >= 80 ? 'hi' : dim.score >= 55 ? 'mid' : 'low';
+    return '<div class="dim-block">' +
+      '<div class="dim-head"><span class="name">' + dim.label + '</span><span class="score">' + dim.score + '<small>/100</small></span></div>' +
+      '<div class="bar"><i class="' + cls + '" style="width:' + dim.score + '%"></i></div>' +
+      '<div class="dim-basis">' + dim.basis + '</div></div>';
+  }).join('');
+
+  const kwBox = $('kwGrid');
+  kwBox.innerHTML =
+    '<div class="kw-box"><div class="t">命中关键词</div><div class="kw-tags">' +
+    (d.kwHit.length ? d.kwHit.map(k => '<span class="hit">' + esc(k) + '</span>').join('') : '<span style="color:#8A97A8">暂无命中</span>') +
+    '</div><div class="kw-rate">覆盖率 ' + Math.round(d.kwHit.length/(d.kwHit.length+d.kwMiss.length)*100) + '%</div></div>' +
+    '<div class="kw-box"><div class="t">缺失关键词</div><div class="kw-tags">' +
+    (d.kwMiss.length ? d.kwMiss.slice(0,8).map(k => '<span class="miss">' + esc(k) + '</span>').join('') : '<span style="color:#1E8E5A">全部覆盖</span>') +
+    '</div><div class="kw-rate">建议补充以提升初筛通过率</div></div>';
+
+  const al = $('adviceList');
+  al.innerHTML = d.advices.map((a, i) =>
+    '<div class="advice" id="adv' + i + '">' +
+      '<div class="idx">' + (i+1) + '</div>' +
+      '<div class="body">' +
+        '<div class="q">' + esc(a.q) + '</div>' +
+        '<div class="why">' + esc(a.why) + '</div>' +
+        '<div class="quote"><b>原文定位</b><br>' + esc(a.quote) + '</div>' +
+        '<div class="rewrite"><b>改写示例</b><br>' + esc(a.rewrite) + '</div>' +
+        '<div class="actions">' +
+          '<button class="mini-btn" data-i="' + i + '" data-act="adopt">采纳此建议</button>' +
+          '<button class="mini-btn" data-i="' + i + '" data-act="no">无帮助</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>').join('');
+  $('btnCompare').style.display = 'block';
+}
+
+/* ---------- 采纳与对比 ---------- */
+function adoptedText(){
+  let t = lastDiagnosis.raw;
+  lastDiagnosis.advices.forEach((a, i) => {
+    if (adopted.has(i) && t.includes(a.quote)) t = t.replace(a.quote, a.rewrite);
+  });
+  return t;
+}
+function openCompare(){
+  const before = lastDiagnosis.raw;
+  const after = adoptedText();
+  $('beforeText').textContent = before;
+  const afterSafe = esc(after);
+  const htmlAfter = lastDiagnosis.advices.map(a => a.rewrite).filter(r => r && after.includes(r)).reduce(
+    (acc, r) => acc.replace(esc(r), '<span class="new">' + esc(r) + '</span>'), afterSafe);
+  $('afterText').innerHTML = htmlAfter;
+
+  const d2 = diagnose(after, currentJob);
+  const rows = Object.keys(lastDiagnosis.dims).map(k => {
+    const beforeS = lastDiagnosis.dims[k].score;
+    const afterS = d2.dims[k].score;
+    const up = afterS - beforeS;
+    return '<div class="row">' +
+      '<span class="lbl">' + d2.dims[k].label + '</span>' +
+      '<span class="bar"><i class="before-bar" style="width:' + Math.min(100,beforeS) + '%"></i></span>' +
+      '<span class="val">' + beforeS + ' → ' + afterS + (up > 0 ? ' <span class="up">+'+up+'</span>' : '') + '</span>' +
+      '<span class="bar"><i class="after-bar" style="width:' + Math.min(100,afterS) + '%"></i></span>' +
+    '</div>';
+  }).join('');
+  $('cmpDims').innerHTML = '<div class="section-title">评分对比（总分 ' + lastDiagnosis.total + ' → ' + d2.total + '）</div>' + rows;
+  $('overlay').classList.add('show');
+}
+
+/* ---------- 事件绑定 ---------- */
+function renderChips(){
+  const box = $('jobChips');
+  box.innerHTML = Object.keys(JOB_KB).map(j =>
+    '<button class="chip' + (j === currentJob ? ' active' : '') + '" data-job="' + j + '">' + j + '</button>').join('');
+}
+$('jobChips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  currentJob = chip.dataset.job;
+  renderChips();
+  $('customJob').value = '';
+});
+$('btnCustomJob').addEventListener('click', () => {
+  const v = $('customJob').value.trim();
+  if (!v) { toast('请输入岗位名称'); return; }
+  if (!JOB_KB[v]) JOB_KB[v] = DEFAULT_KB.slice();
+  currentJob = v;
+  renderChips();
+  toast('目标岗位已设为「' + v + '」');
+});
+$('btnSample').addEventListener('click', () => {
+  $('resumeInput').value = SAMPLE_RESUME;
+  toast('已加载示例简历');
+});
+$('btnClear').addEventListener('click', () => {
+  $('resumeInput').value = '';
+  $('reportBody').style.display = 'none';
+  $('emptyState').style.display = 'block';
+  adopted.clear();
+  toast('已清空');
+});
+$('btnDiagnose').addEventListener('click', () => {
+  const resume = $('resumeInput').value.trim();
+  if (!resume) { toast('请先粘贴简历内容'); return; }
+  if (resume.length < 60) { toast('简历内容过少（<60 字），建议补充后再诊断'); return; }
+  $('reportBody').style.display = 'none';
+  $('emptyState').style.display = 'none';
+  $('loadingBox').style.display = 'block';
+  setTimeout(() => {
+    renderReport(diagnose(resume, currentJob));
+    toast('诊断完成');
+  }, 1100);
+});
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.mini-btn');
+  if (!btn) return;
+  const i = +btn.dataset.i;
+  if (btn.dataset.act === 'adopt'){
+    if (adopted.has(i)){ adopted.delete(i); btn.textContent = '采纳此建议'; btn.classList.remove('on'); toast('已撤销采纳'); }
+    else { adopted.add(i); btn.textContent = '已采纳'; btn.classList.add('on'); toast('已采纳，可查看前后对比'); }
+  } else if (btn.dataset.act === 'no'){
+    btn.textContent = '已反馈'; btn.classList.add('ok'); toast('感谢反馈，将用于优化建议质量');
+  }
+});
+$('btnCompare').addEventListener('click', openCompare);
+$('btnCloseModal').addEventListener('click', () => $('overlay').classList.remove('show'));
+$('overlay').addEventListener('click', e => { if (e.target === $('overlay')) $('overlay').classList.remove('show'); });
+
+/* 初始化 */
+renderChips();
+
+</script>
+</body>
+</html>
